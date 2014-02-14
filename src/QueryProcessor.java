@@ -61,7 +61,8 @@ public class QueryProcessor {
 		return tabs;
 	}
 
-	public static DefaultListModel<String> getUserPrivList(String user, Connection con) {
+	public static DefaultListModel<String> getUserPrivList(String user,
+			Connection con) {
 		DefaultListModel<String> users = new DefaultListModel<String>();
 		if (user.equals("")) {
 			users.addElement("");
@@ -144,11 +145,29 @@ public class QueryProcessor {
 				Statement stmt = con.createStatement();
 				System.out.println(query);
 				stmt.executeQuery(query);
+				JOptionPane.showMessageDialog(null, "Privileges Updated.");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		JOptionPane.showMessageDialog(null, "Privileges Updated!");
 		return;
+	}
+
+	public static void createUser(String user, String pass, Connection con) {
+		String query1 = "INSERT INTO moviedb.employees VALUES ('" + user + "','" + pass + "'," +" NULL)";
+		String query2 = "CREATE USER '" + user + "'@'localhost' IDENTIFIED BY '" +pass +"';";
+		
+		
+		try{
+			Statement stmt = con.createStatement();
+			Statement stmt2 = con.createStatement();
+			
+			stmt.executeUpdate(query1);
+			stmt2.executeUpdate(query2);
+			
+			JOptionPane.showMessageDialog(null, "Users created.");
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 	}
 }

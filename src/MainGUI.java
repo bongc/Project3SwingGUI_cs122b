@@ -44,16 +44,21 @@ public class MainGUI {
 	private static Connection con;
 	private static JFrame input;
 	private static JPanel users;
+	private static PanelList userPL;
+	private static JTextArea username;
+	private static JTextArea password;
+	private static JFrame gui;
 
 	public static void main(String[] args) throws Exception {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		con = DriverManager.getConnection("jdbc:mysql:///moviedb", "root", "1234");
+		con = DriverManager.getConnection("jdbc:mysql:///moviedb", "root",
+				"132435");
 
 		createGUI();
 	}
 
 	public static void createGUI() {
-		JFrame gui = new JFrame("User Management Interface");
+		gui = new JFrame("User Management Interface");
 		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		gui.setPreferredSize(new Dimension(1024, 700));
 
@@ -64,10 +69,12 @@ public class MainGUI {
 		JPanel userContainer = new JPanel();
 		userContainer.setLayout(new BoxLayout(userContainer, BoxLayout.X_AXIS));
 		JPanel userPrivContainer = new JPanel();
-		userPrivContainer.setLayout(new BoxLayout(userPrivContainer, BoxLayout.Y_AXIS));
-		userPrivContainer.setBorder(BorderFactory.createTitledBorder("User's Privileges"));
+		userPrivContainer.setLayout(new BoxLayout(userPrivContainer,
+				BoxLayout.Y_AXIS));
+		userPrivContainer.setBorder(BorderFactory
+				.createTitledBorder("User's Privileges"));
 
-		 users = new JPanel();
+		users = new JPanel();
 		users.setBorder(BorderFactory.createTitledBorder("Users"));
 		uPrivs = new JPanel();
 		JPanel dbs = new JPanel();
@@ -81,7 +88,7 @@ public class MainGUI {
 
 		JPanel button = new JPanel();
 
-		PanelList userPL = new PanelList(con);
+		userPL = new PanelList(con);
 		PanelList dbPL = new PanelList(con);
 		tablePL = new PanelList(con);
 		columnPL = new PanelList(con);
@@ -112,7 +119,8 @@ public class MainGUI {
 				int index = list.getSelectedIndex();
 				database = list.getModel().getElementAt(index);
 				tabs.removeAll();
-				tablePL.premadeList(QueryProcessor.getTables(con, database), tabs, columnRender, 200, 120);
+				tablePL.premadeList(QueryProcessor.getTables(con, database),
+						tabs, columnRender, 200, 120);
 				tabs.revalidate();
 				tabs.repaint();
 			}
@@ -124,7 +132,9 @@ public class MainGUI {
 				int index = list.getSelectedIndex();
 				table = list.getModel().getElementAt(index);
 				cols.removeAll();
-				columnPL.premadeList(QueryProcessor.getColumns(con, table, database), cols, columnSelect, 200, 120);
+				columnPL.premadeList(
+						QueryProcessor.getColumns(con, table, database), cols,
+						columnSelect, 200, 120);
 				cols.revalidate();
 				cols.repaint();
 			}
@@ -156,7 +166,8 @@ public class MainGUI {
 		revokeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				// remove grant
-				JList<String> jl = (JList<String>) ((JScrollPane) uPrivs.getComponent(0)).getViewport().getComponents()[0];
+				JList<String> jl = (JList<String>) ((JScrollPane) uPrivs
+						.getComponent(0)).getViewport().getComponents()[0];
 				int index = jl.getSelectedIndex();
 				if (index != -1) {
 					String grant = jl.getModel().getElementAt(index).toString();
@@ -169,15 +180,20 @@ public class MainGUI {
 		});
 
 		uPrivsPanel = new PanelList(con);
-		uPrivsPanel.premadeList(QueryProcessor.getUserPrivList("", con), uPrivs, null, 350, 500);
+		uPrivsPanel.premadeList(QueryProcessor.getUserPrivList("", con),
+				uPrivs, null, 350, 500);
 
 		userPrivContainer.add(uPrivs);
 		userPrivContainer.add(revokeButton);
 
-		userPL.premadeList(QueryProcessor.getUserList(users, con), users, userSelect, 200, 500);
-		dbPL.premadeList(QueryProcessor.getDatabases(dbs, con), dbs, tableRender, 200, 120);
-		tablePL.premadeList(new DefaultListModel<String>(), tabs, null, 200, 120);
-		columnPL.premadeList(new DefaultListModel<String>(), cols, null, 200, 120);
+		userPL.premadeList(QueryProcessor.getUserList(users, con), users,
+				userSelect, 200, 500);
+		dbPL.premadeList(QueryProcessor.getDatabases(dbs, con), dbs,
+				tableRender, 200, 120);
+		tablePL.premadeList(new DefaultListModel<String>(), tabs, null, 200,
+				120);
+		columnPL.premadeList(new DefaultListModel<String>(), cols, null, 200,
+				120);
 		privilegePL.addToList("ALL");
 		privilegePL.addToList("SELECT");
 		privilegePL.addToList("INSERT");
@@ -193,7 +209,8 @@ public class MainGUI {
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				// update database;
-				QueryProcessor.givePrivilege(user, database, table, column, privilege, con);
+				QueryProcessor.givePrivilege(user, database, table, column,
+						privilege, con);
 				// update user's privilege list...
 				updateUserPrivList(null);
 			}
@@ -241,7 +258,7 @@ public class MainGUI {
 		button.add(clearButton);
 		button.add(updateButton);
 
-		createMenuBar(gui);
+		createMenuBar();
 		gui.getContentPane().add(container);
 		gui.getContentPane().add(button, BorderLayout.PAGE_END);
 		gui.pack();
@@ -255,7 +272,8 @@ public class MainGUI {
 			jl = jlist;
 		} else {
 			try {
-				jl = (JList<String>) ((JScrollPane) users.getComponent(0)).getViewport().getComponents()[0];
+				jl = (JList<String>) ((JScrollPane) users.getComponent(0))
+						.getViewport().getComponents()[0];
 			} catch (Exception e) {
 				return;
 			}
@@ -264,13 +282,14 @@ public class MainGUI {
 		uPrivs.removeAll();
 		if (index != -1) {
 			user = jl.getModel().getElementAt(index);
-			uPrivsPanel.premadeList(QueryProcessor.getUserPrivList(user, con), uPrivs,
-					null, 350, 300);
+			uPrivsPanel.premadeList(QueryProcessor.getUserPrivList(user, con),
+					uPrivs, null, 350, 300);
 			uPrivs.revalidate();
 			uPrivs.repaint();
 		}
 	}
-	private static void createMenuBar(JFrame gui) {
+
+	private static void createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBackground(new Color(190, 190, 190));
 		menuBar.setPreferredSize(new Dimension(400, 20));
@@ -281,28 +300,43 @@ public class MainGUI {
 		JMenuItem item2 = new JMenuItem("Exit");
 
 		input = new JFrame("Create User");
-		JTextArea username = new JTextArea();
+		username = new JTextArea(1, 16);
 		username.setPreferredSize(new Dimension(300, 30));
-		
-		JTextArea password = new JTextArea();
+
+		password = new JTextArea(1, 16);
 		password.setPreferredSize(new Dimension(300, 30));
-		
+
 		JPanel userFields = new JPanel();
 		JPanel userPanel = new JPanel();
 		userPanel.add(username);
 		JPanel passPanel = new JPanel();
 		passPanel.add(password);
+		JButton create = new JButton("Create");
+		create.setPreferredSize(new Dimension(80, 20));
+		create.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				QueryProcessor.createUser(username.getText().trim(), password
+						.getText().trim(), con);
+				username.setText("");
+				password.setText("");
+				input.dispose();
+				gui.dispose();
+				refresh();
+
+			}
+		});
 		userPanel.setBorder(BorderFactory.createTitledBorder("Username: "));
 		passPanel.setBorder(BorderFactory.createTitledBorder("Password: "));
-		
+
 		userFields.add(userPanel);
 		userFields.add(passPanel);
-		
+		userFields.add(create);
+
 		userFields.setLayout(new BoxLayout(userFields, BoxLayout.X_AXIS));
 
 		input.add(userFields);
 		input.pack();
-		
+
 		item1.setToolTipText("Create a new user.");
 		item1.addActionListener(new ActionListener() {
 			@Override
@@ -326,4 +360,7 @@ public class MainGUI {
 		gui.setJMenuBar(menuBar);
 	}
 
+	public static void refresh() {
+		createGUI();
+	}
 }
