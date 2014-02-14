@@ -148,4 +148,37 @@ public class QueryProcessor {
 		JOptionPane.showMessageDialog(null, "Privileges Updated!");
 		return;
 	}
+
+	public static DefaultListModel<String> getProcs(Connection con, String procDatabase) {
+		DefaultListModel<String> procs = new DefaultListModel<String>();
+		String query = "SHOW PROCEDURE STATUS WHERE Db = '" + procDatabase + "'";
+		try {
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(query);
+			while (rs.next()) {
+				procs.addElement(rs.getString("Db") + "." + rs.getString("Name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return procs;
+	}
+
+	public static void giveProcedurePrivilege(String user, String selectedProc, Connection con) {
+		if (user == null) {
+			JOptionPane.showMessageDialog(null, "Please Select a User.");
+			return;
+		}
+		if (selectedProc == null) {
+			JOptionPane.showMessageDialog(null, "Please Select a Procedure.");
+			return;
+		}
+		String query = "GRANT EXECUTE ON PROCEDURE " + selectedProc + " TO '" + user + "'@'localhost'";
+		try {
+			Statement statement = con.createStatement();
+			statement.executeQuery(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
