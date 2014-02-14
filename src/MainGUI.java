@@ -45,10 +45,12 @@ public class MainGUI {
 	private static Connection con;
 	private static JFrame input;
 	private static JPanel users;
+
 	private static PanelList userPL;
 	private static JTextArea username;
 	private static JTextArea password;
 	private static JFrame gui;
+
 	private static JPanel procDbs;
 	private static JPanel procs;
 	private static JButton updateProcsButton;
@@ -80,8 +82,6 @@ public class MainGUI {
 		userPrivContainer.setBorder(BorderFactory
 				.createTitledBorder("User's Privileges"));
 
-		userPrivContainer.setLayout(new BoxLayout(userPrivContainer, BoxLayout.Y_AXIS));
-		userPrivContainer.setBorder(BorderFactory.createTitledBorder("User's Privileges"));
 		JPanel procContainer = new JPanel();
 		procContainer.setLayout(new BoxLayout(procContainer, BoxLayout.Y_AXIS));
 
@@ -160,6 +160,7 @@ public class MainGUI {
 				JList<String> list = (JList<String>) evt.getSource();
 				int index = list.getSelectedIndex();
 				column = list.getModel().getElementAt(index);
+
 				privs.removeAll();
 				PanelList pan = new PanelList(con);
 				pan.addToList("SELECT");
@@ -184,21 +185,22 @@ public class MainGUI {
 				selectedProc = list.getModel().getElementAt(index);
 			}
 		};
-		
+
 		MouseAdapter showProcListener = new MouseAdapter() {
 			private String procDatabase;
+
 			public void mouseClicked(MouseEvent evt) {
 				JList<String> list = (JList<String>) evt.getSource();
 				int index = list.getSelectedIndex();
 				procDatabase = list.getModel().getElementAt(index);
 				procs.removeAll();
-				tablePL.premadeList(QueryProcessor.getProcs(con, procDatabase), procs, procListener, 200, 240);
+				tablePL.premadeList(QueryProcessor.getProcs(con, procDatabase),
+						procs, procListener, 200, 240);
 				procs.add(updateProcsButton);
 				procs.revalidate();
 				procs.repaint();
 			}
 		};
-		
 
 		JButton revokeButton = new JButton("revoke");
 		revokeButton.setPreferredSize(new Dimension(80, 20));
@@ -233,13 +235,11 @@ public class MainGUI {
 				120);
 		columnPL.premadeList(new DefaultListModel<String>(), cols, null, 200,
 				120);
-		userPL.premadeList(QueryProcessor.getUserList(users, con), users, userSelect, 200, 500);
-		dbPL.premadeList(QueryProcessor.getDatabases(dbs, con), dbs, tableRender, 200, 120);
-		tablePL.premadeList(new DefaultListModel<String>(), tabs, null, 200, 120);
-		columnPL.premadeList(new DefaultListModel<String>(), cols, null, 200, 120);
-		//lol too last to create new PL
-		columnPL.premadeList(QueryProcessor.getDatabases(dbs, con), procDbs, showProcListener, 200, 240);
-		columnPL.premadeList(new DefaultListModel<String>(), procs, procListener, 200, 240);
+		// lol too last to create new PL
+		columnPL.premadeList(QueryProcessor.getDatabases(dbs, con), procDbs,
+				showProcListener, 200, 240);
+		columnPL.premadeList(new DefaultListModel<String>(), procs,
+				procListener, 200, 240);
 		privilegePL.addToList("ALL");
 		privilegePL.addToList("SELECT");
 		privilegePL.addToList("INSERT");
@@ -307,11 +307,11 @@ public class MainGUI {
 		dbContainer.add(tabs);
 		dbContainer.add(cols);
 		dbContainer.add(privs);
-		
+
 		procContainer.add(procDbs);
 		procs.add(updateProcsButton);
 		procContainer.add(procs);
-		
+
 		container.add(userContainer);
 		container.add(userPrivContainer);
 		container.add(dbContainer);
