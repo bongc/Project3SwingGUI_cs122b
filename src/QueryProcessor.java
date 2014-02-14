@@ -166,8 +166,10 @@ public class QueryProcessor {
 			stmt.executeUpdate(query1);
 			stmt2.executeUpdate(query2);
 
-			JOptionPane.showMessageDialog(null, "Users created.");
+			JOptionPane.showMessageDialog(null, "User created.");
 		} catch (SQLException e) {
+
+			JOptionPane.showMessageDialog(null, "Username already exists.");
 			e.printStackTrace();
 		}
 	}
@@ -207,6 +209,7 @@ public class QueryProcessor {
 			statement.executeQuery(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			
 		}
 	}
 
