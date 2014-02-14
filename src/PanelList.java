@@ -1,8 +1,8 @@
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
 import java.sql.Connection;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -10,43 +10,45 @@ import javax.swing.ListSelectionModel;
 
 public class PanelList {
 
-	public JFrame gui;
 	public Connection con;
 	DefaultListModel<String> l;
 	public JList<String> jlist;
+	JScrollPane listScroller = new JScrollPane();
 
-	public PanelList(JFrame gui, Connection con) {
-		this.gui = gui;
+	public PanelList(Connection con) {
 		this.con = con;
 		l = new DefaultListModel<String>();
 	}
 
-	public void premadeList(DefaultListModel<String> list, JPanel panel) {
+	public void premadeList(DefaultListModel<String> list, JPanel panel, MouseAdapter ma) {
 		JList<String> jlist = new JList<String>(list);
 		jlist.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		jlist.setLayoutOrientation(JList.VERTICAL_WRAP);
+		jlist.setLayoutOrientation(JList.VERTICAL);
+		if(ma != null){
+			jlist.addMouseListener(ma);
+		}
 
 		JScrollPane listScroller = new JScrollPane(jlist);
-		listScroller.setPreferredSize(new Dimension(300, 150));
+		listScroller.setPreferredSize(new Dimension(300, 120));
 
 		panel.add(listScroller);
+	}
+	
+	public void clearList(JPanel panel){
+		panel.remove(listScroller);
+		listScroller = null;
 	}
 
 	public void addToList(String s) {
 		l.addElement(s);
 	}
 
-	public void createJList(Boolean singleSelect) {
+	public void addToPanel(JPanel panel, MouseAdapter ma) {
 		jlist = new JList<String>(l);
-
-		if (singleSelect) {
-			jlist.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		jlist.setLayoutOrientation(JList.VERTICAL);
+		if(ma != null){
+			jlist.addMouseListener(ma);
 		}
-		jlist.setLayoutOrientation(JList.VERTICAL_WRAP);
-	}
-
-	public void addToPanel(JPanel panel) {
-
 		JScrollPane listScroller = new JScrollPane(jlist);
 		listScroller.setPreferredSize(new Dimension(300, 150));
 		panel.add(listScroller);
