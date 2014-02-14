@@ -154,20 +154,60 @@ public class QueryProcessor {
 	}
 
 	public static void createUser(String user, String pass, Connection con) {
-		String query1 = "INSERT INTO moviedb.employees VALUES ('" + user + "','" + pass + "'," +" NULL)";
-		String query2 = "CREATE USER '" + user + "'@'localhost' IDENTIFIED BY '" +pass +"';";
-		
-		
-		try{
+		String query1 = "INSERT INTO moviedb.employees VALUES ('" + user
+				+ "','" + pass + "'," + " NULL)";
+		String query2 = "CREATE USER '" + user
+				+ "'@'localhost' IDENTIFIED BY '" + pass + "';";
+
+		try {
 			Statement stmt = con.createStatement();
 			Statement stmt2 = con.createStatement();
-			
+
 			stmt.executeUpdate(query1);
 			stmt2.executeUpdate(query2);
-			
+
 			JOptionPane.showMessageDialog(null, "Users created.");
-		}catch(SQLException e){
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+
+	public static DefaultListModel<String> getProcs(Connection con,
+			String procDatabase) {
+		DefaultListModel<String> procs = new DefaultListModel<String>();
+		String query = "SHOW PROCEDURE STATUS WHERE Db = '" + procDatabase
+				+ "'";
+		try {
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(query);
+			while (rs.next()) {
+				procs.addElement(rs.getString("Db") + "."
+						+ rs.getString("Name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return procs;
+	}
+
+	public static void giveProcedurePrivilege(String user, String selectedProc,
+			Connection con) {
+		if (user == null) {
+			JOptionPane.showMessageDialog(null, "Please Select a User.");
+			return;
+		}
+		if (selectedProc == null) {
+			JOptionPane.showMessageDialog(null, "Please Select a Procedure.");
+			return;
+		}
+		String query = "GRANT EXECUTE ON PROCEDURE " + selectedProc + " TO '"
+				+ user + "'@'localhost'";
+		try {
+			Statement statement = con.createStatement();
+			statement.executeQuery(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

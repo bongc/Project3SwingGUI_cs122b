@@ -21,11 +21,12 @@ public class PanelList {
 		l = new DefaultListModel<String>();
 	}
 
-	public void premadeList(DefaultListModel<String> list, JPanel panel, MouseAdapter ma, int width, int height) {
+	public void premadeList(DefaultListModel<String> list, JPanel panel,
+			MouseAdapter ma, int width, int height) {
 		JList<String> jlist = new JList<String>(list);
 		jlist.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		jlist.setLayoutOrientation(JList.VERTICAL);
-		if(ma != null){
+		if (ma != null) {
 			jlist.addMouseListener(ma);
 		}
 
@@ -34,8 +35,8 @@ public class PanelList {
 
 		panel.add(listScroller);
 	}
-	
-	public void clearList(){
+
+	public void clearList() {
 	}
 
 	public void addToList(String s) {
@@ -45,16 +46,15 @@ public class PanelList {
 	public void addToPanel(JPanel panel, MouseAdapter ma, int width, int height) {
 		jlist = new JList<String>(l);
 		jlist.setLayoutOrientation(JList.VERTICAL);
-		if(ma != null){
+		if (ma != null) {
 			jlist.addMouseListener(ma);
 		}
 		listScroller = new JScrollPane(jlist);
 		listScroller.setPreferredSize(new Dimension(200, 120));
 		panel.add(listScroller);
 	}
-	
-	public JScrollPane getJList()
-	{
+
+	public JScrollPane getJList() {
 		return listScroller;
 	}
 

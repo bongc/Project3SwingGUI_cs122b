@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -48,6 +49,10 @@ public class MainGUI {
 	private static JTextArea username;
 	private static JTextArea password;
 	private static JFrame gui;
+	private static JPanel procDbs;
+	private static JPanel procs;
+	private static JButton updateProcsButton;
+	private static String selectedProc;
 
 	public static void main(String[] args) throws Exception {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -60,7 +65,7 @@ public class MainGUI {
 	public static void createGUI() {
 		gui = new JFrame("User Management Interface");
 		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		gui.setPreferredSize(new Dimension(1024, 700));
+		gui.setPreferredSize(new Dimension(1200, 700));
 
 		JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
@@ -69,10 +74,16 @@ public class MainGUI {
 		JPanel userContainer = new JPanel();
 		userContainer.setLayout(new BoxLayout(userContainer, BoxLayout.X_AXIS));
 		JPanel userPrivContainer = new JPanel();
+
 		userPrivContainer.setLayout(new BoxLayout(userPrivContainer,
 				BoxLayout.Y_AXIS));
 		userPrivContainer.setBorder(BorderFactory
 				.createTitledBorder("User's Privileges"));
+
+		userPrivContainer.setLayout(new BoxLayout(userPrivContainer, BoxLayout.Y_AXIS));
+		userPrivContainer.setBorder(BorderFactory.createTitledBorder("User's Privileges"));
+		JPanel procContainer = new JPanel();
+		procContainer.setLayout(new BoxLayout(procContainer, BoxLayout.Y_AXIS));
 
 		users = new JPanel();
 		users.setBorder(BorderFactory.createTitledBorder("Users"));
@@ -85,6 +96,11 @@ public class MainGUI {
 		cols.setBorder(BorderFactory.createTitledBorder("Columns"));
 		privs = new JPanel();
 		privs.setBorder(BorderFactory.createTitledBorder("Privileges"));
+		procDbs = new JPanel();
+		procDbs.setBorder(BorderFactory.createTitledBorder("Databases"));
+		procs = new JPanel();
+		procs.setBorder(BorderFactory.createTitledBorder("Procedures"));
+		procs.setLayout(new BoxLayout(procs, BoxLayout.Y_AXIS));
 
 		JPanel button = new JPanel();
 
@@ -161,6 +177,29 @@ public class MainGUI {
 			}
 		};
 
+		final MouseAdapter procListener = new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				JList<String> list = (JList<String>) evt.getSource();
+				int index = list.getSelectedIndex();
+				selectedProc = list.getModel().getElementAt(index);
+			}
+		};
+		
+		MouseAdapter showProcListener = new MouseAdapter() {
+			private String procDatabase;
+			public void mouseClicked(MouseEvent evt) {
+				JList<String> list = (JList<String>) evt.getSource();
+				int index = list.getSelectedIndex();
+				procDatabase = list.getModel().getElementAt(index);
+				procs.removeAll();
+				tablePL.premadeList(QueryProcessor.getProcs(con, procDatabase), procs, procListener, 200, 240);
+				procs.add(updateProcsButton);
+				procs.revalidate();
+				procs.repaint();
+			}
+		};
+		
+
 		JButton revokeButton = new JButton("revoke");
 		revokeButton.setPreferredSize(new Dimension(80, 20));
 		revokeButton.addActionListener(new ActionListener() {
@@ -194,6 +233,13 @@ public class MainGUI {
 				120);
 		columnPL.premadeList(new DefaultListModel<String>(), cols, null, 200,
 				120);
+		userPL.premadeList(QueryProcessor.getUserList(users, con), users, userSelect, 200, 500);
+		dbPL.premadeList(QueryProcessor.getDatabases(dbs, con), dbs, tableRender, 200, 120);
+		tablePL.premadeList(new DefaultListModel<String>(), tabs, null, 200, 120);
+		columnPL.premadeList(new DefaultListModel<String>(), cols, null, 200, 120);
+		//lol too last to create new PL
+		columnPL.premadeList(QueryProcessor.getDatabases(dbs, con), procDbs, showProcListener, 200, 240);
+		columnPL.premadeList(new DefaultListModel<String>(), procs, procListener, 200, 240);
 		privilegePL.addToList("ALL");
 		privilegePL.addToList("SELECT");
 		privilegePL.addToList("INSERT");
@@ -211,6 +257,17 @@ public class MainGUI {
 				// update database;
 				QueryProcessor.givePrivilege(user, database, table, column,
 						privilege, con);
+				// update user's privilege list...
+				updateUserPrivList(null);
+			}
+
+		});
+		updateProcsButton = new JButton("Grant Procedure Access");
+		updateProcsButton.setPreferredSize(new Dimension(160, 20));
+		updateProcsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				// update database;
+				QueryProcessor.giveProcedurePrivilege(user, selectedProc, con);
 				// update user's privilege list...
 				updateUserPrivList(null);
 			}
@@ -250,12 +307,17 @@ public class MainGUI {
 		dbContainer.add(tabs);
 		dbContainer.add(cols);
 		dbContainer.add(privs);
-
+		
+		procContainer.add(procDbs);
+		procs.add(updateProcsButton);
+		procContainer.add(procs);
+		
 		container.add(userContainer);
 		container.add(userPrivContainer);
 		container.add(dbContainer);
 
 		button.add(clearButton);
+		container.add(procContainer);
 		button.add(updateButton);
 
 		createMenuBar();
