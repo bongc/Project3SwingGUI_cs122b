@@ -33,40 +33,31 @@ public class MainGUI {
 
 		JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+		JPanel dbContainer = new JPanel();
+		dbContainer.setLayout(new BoxLayout(dbContainer, BoxLayout.Y_AXIS));
+		JPanel userContainer = new JPanel();
+		userContainer.setLayout(new BoxLayout(userContainer, BoxLayout.X_AXIS));
 
 		JPanel users = new JPanel();
 		users.setBorder(BorderFactory.createTitledBorder("Users"));
-		JPanel resources = new JPanel();
-		resources.setBorder(BorderFactory.createTitledBorder("Resources"));
-		JPanel privileges = new JPanel();
-		privileges.setBorder(BorderFactory.createTitledBorder("Privileges"));
+		JPanel uPrivs = new JPanel();
+		uPrivs.setBorder(BorderFactory.createTitledBorder("User's Privileges"));
+		JPanel dbs = new JPanel();
+		dbs.setBorder(BorderFactory.createTitledBorder("Databases"));
+		JPanel tabs = new JPanel();
+		tabs.setBorder(BorderFactory.createTitledBorder("Tables"));
+		JPanel cols = new JPanel();
+		cols.setBorder(BorderFactory.createTitledBorder("Columns"));
+		JPanel privs = new JPanel();
+		privs.setBorder(BorderFactory.createTitledBorder("Privileges"));
+
+
 		final JPanel button = new JPanel();
 
 		PanelList userPL = new PanelList(gui, con);
 		userPL.premadeList(QueryProcessor.getUserList(users, con), users);
-		PanelList resPL = new PanelList(gui,con);
-		resPL.addToList("Databases");
-		resPL.addToList("Tables");
-		resPL.addToList("Columns");
-		resPL.addToList("Stored Procedures");
-		resPL.createJList(true);
-		resPL.getJList().addFocusListener(new FocusListener(){
-
-			public void focusGained(FocusEvent e) {
-				
-			}
-
-			public void focusLost(FocusEvent e) {
-				
-			}
-			
-		});
-		resPL.addToPanel(resources);
 		
 		
-		
-		
-
 		// lm.createList(QueryProcessor.getUserList(users, con), resources);
 		//
 		// lm.createList(QueryProcessor.getUserList(users, con), privileges);
@@ -76,14 +67,21 @@ public class MainGUI {
 		updateButton.setPreferredSize(new Dimension(80, 20));
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				//update database;
+				// update database;
 				System.exit(0);
 			}
 		});
-
-		container.add(users);
-		container.add(resources);
-		container.add(privileges);
+		
+		userContainer.add(users);
+		userContainer.add(uPrivs);
+		
+		dbContainer.add(dbs);
+		dbContainer.add(tabs);
+		dbContainer.add(cols);
+		
+		container.add(userContainer);
+		container.add(dbContainer);
+		container.add(privs);
 		button.add(updateButton);
 
 		createMenuBar(gui);
