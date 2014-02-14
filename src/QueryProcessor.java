@@ -61,8 +61,8 @@ public class QueryProcessor {
 		return tabs;
 	}
 
-	public static DefaultListModel getUserPrivList(String user, Connection con) {
-		DefaultListModel users = new DefaultListModel();
+	public static DefaultListModel<String> getUserPrivList(String user, Connection con) {
+		DefaultListModel<String> users = new DefaultListModel<String>();
 		if (user.equals("")) {
 			users.addElement("");
 			return users;
