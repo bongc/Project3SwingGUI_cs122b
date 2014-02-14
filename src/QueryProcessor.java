@@ -35,7 +35,9 @@ public class QueryProcessor {
 			Statement statement = con.createStatement();
 			ResultSet rs = statement.executeQuery(query);
 			while (rs.next()) {
-				dbs.addElement(rs.getString("Database"));
+				if (!rs.getString("Database").equals("information_schema")) {
+					dbs.addElement(rs.getString("Database"));
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -134,12 +136,13 @@ public class QueryProcessor {
 			query = "GRANT " + privilege + " ON " + database + "." + table
 					+ " TO " + "'" + user + "'@'localhost';";
 		} else {
-			query = "GRANT (" + privilege + ") " + column + " ON " + database
+			query = "GRANT " + privilege + " (" + column + ") ON " + database
 					+ "." + table + " TO " + "'" + user + "'@'localhost';";
 		}
 		if (query != null) {
 			try {
 				Statement stmt = con.createStatement();
+				System.out.println(query);
 				stmt.executeQuery(query);
 			} catch (SQLException e) {
 				e.printStackTrace();

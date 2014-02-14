@@ -19,6 +19,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class MainGUI {
 
@@ -41,6 +42,7 @@ public class MainGUI {
 	private static PanelList uPrivsPanel;
 	private static JPanel uPrivs;
 	private static Connection con;
+	private static JFrame input;
 
 	public static void main(String[] args) throws Exception {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -93,7 +95,6 @@ public class MainGUI {
 				int index = list.getSelectedIndex();
 				user = list.getModel().getElementAt(index);
 				if (index != -1) {
-					System.out.println(list.getModel().getElementAt(index));
 					uPrivs.removeAll();
 					uPrivsPanel.premadeList(
 							QueryProcessor.getUserPrivList("testuser", con),
@@ -136,6 +137,12 @@ public class MainGUI {
 				JList<String> list = (JList<String>) evt.getSource();
 				int index = list.getSelectedIndex();
 				column = list.getModel().getElementAt(index);
+				privs.removeAll();
+				PanelList pan = new PanelList(con);
+				pan.addToList("SELECT");
+				pan.addToPanel(privs, privilegeSelect, 200, 120);
+				privs.revalidate();
+				privs.repaint();
 
 			}
 		};
@@ -204,6 +211,31 @@ public class MainGUI {
 			}
 		});
 
+		JButton clearButton = new JButton("Clear");
+		clearButton.setPreferredSize(new Dimension(80, 20));
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				// update database;
+				tabs.removeAll();
+				cols.removeAll();
+				privs.removeAll();
+				privs.add(privilegePL.getJList());
+				tablePL.premadeList(new DefaultListModel<String>(), tabs, null,
+						200, 120);
+				columnPL.premadeList(new DefaultListModel<String>(), cols,
+						null, 200, 120);
+				table = null;
+				column = null;
+				privilege = null;
+				tabs.revalidate();
+				cols.revalidate();
+				privs.revalidate();
+				tabs.repaint();
+				cols.repaint();
+				privs.repaint();
+			}
+		});
+
 		userContainer.add(users);
 
 		userPrivContainer.add(uPrivs);
@@ -216,6 +248,8 @@ public class MainGUI {
 		container.add(userContainer);
 		container.add(userPrivContainer);
 		container.add(dbContainer);
+
+		button.add(clearButton);
 		button.add(updateButton);
 
 		createMenuBar(gui);
@@ -233,9 +267,42 @@ public class MainGUI {
 
 		JMenu menu = new JMenu("File");
 
-		JMenuItem item1 = new JMenuItem("Exit");
-		item1.setToolTipText("Close Program");
+		JMenuItem item1 = new JMenuItem("Add User");
+		JMenuItem item2 = new JMenuItem("Exit");
+
+		input = new JFrame("Create User");
+		JTextArea username = new JTextArea();
+		username.setPreferredSize(new Dimension(300, 30));
+		
+		JTextArea password = new JTextArea();
+		password.setPreferredSize(new Dimension(300, 30));
+		
+		JPanel userFields = new JPanel();
+		JPanel userPanel = new JPanel();
+		userPanel.add(username);
+		JPanel passPanel = new JPanel();
+		passPanel.add(password);
+		userPanel.setBorder(BorderFactory.createTitledBorder("Username: "));
+		passPanel.setBorder(BorderFactory.createTitledBorder("Password: "));
+		
+		userFields.add(userPanel);
+		userFields.add(passPanel);
+		
+		userFields.setLayout(new BoxLayout(userFields, BoxLayout.X_AXIS));
+
+		input.add(userFields);
+		input.pack();
+		
+		item1.setToolTipText("Create a new user.");
 		item1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				input.setVisible(true);
+			}
+		});
+
+		item2.setToolTipText("Close Program");
+		item2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				System.exit(0);
@@ -243,6 +310,7 @@ public class MainGUI {
 		});
 
 		menu.add(item1);
+		menu.add(item2);
 		menuBar.add(menu);
 
 		gui.setJMenuBar(menuBar);

@@ -29,15 +29,13 @@ public class PanelList {
 			jlist.addMouseListener(ma);
 		}
 
-		JScrollPane listScroller = new JScrollPane(jlist);
+		listScroller = new JScrollPane(jlist);
 		listScroller.setPreferredSize(new Dimension(width, height));
 
 		panel.add(listScroller);
 	}
 	
 	public void clearList(){
-		jlist = null;
-		listScroller = null;
 	}
 
 	public void addToList(String s) {
@@ -55,9 +53,9 @@ public class PanelList {
 		panel.add(listScroller);
 	}
 	
-	public JList<String> getJList()
+	public JScrollPane getJList()
 	{
-		return jlist;
+		return listScroller;
 	}
 
 }
