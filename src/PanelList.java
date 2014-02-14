@@ -1,4 +1,5 @@
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
 import java.sql.Connection;
 
 import javax.swing.DefaultListModel;
@@ -8,26 +9,30 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+//Courtesy of Chris Bong
 public class PanelList {
 
 	public JFrame gui;
 	public Connection con;
-	DefaultListModel<String> l;
-	public JList<String> jlist;
+	DefaultListModel l;
+	public JList jlist;
 
 	public PanelList(JFrame gui, Connection con) {
 		this.gui = gui;
 		this.con = con;
-		l = new DefaultListModel<String>();
+		l = new DefaultListModel();
 	}
 
-	public void premadeList(DefaultListModel<String> list, JPanel panel) {
-		JList<String> jlist = new JList<String>(list);
+	public void premadeList(DefaultListModel list, JPanel panel, MouseAdapter ma, int width, int height) {
+		JList jlist = new JList(list);
 		jlist.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		jlist.setLayoutOrientation(JList.VERTICAL_WRAP);
+		if(ma != null){
+			jlist.addMouseListener(ma);
+		}
 
 		JScrollPane listScroller = new JScrollPane(jlist);
-		listScroller.setPreferredSize(new Dimension(300, 150));
+		listScroller.setPreferredSize(new Dimension(width, height));
 
 		panel.add(listScroller);
 	}
@@ -37,7 +42,7 @@ public class PanelList {
 	}
 
 	public void createJList(Boolean singleSelect) {
-		jlist = new JList<String>(l);
+		jlist = new JList(l);
 
 		if (singleSelect) {
 			jlist.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -52,7 +57,7 @@ public class PanelList {
 		panel.add(listScroller);
 	}
 	
-	public JList<String> getJList()
+	public JList getJList()
 	{
 		return jlist;
 	}
